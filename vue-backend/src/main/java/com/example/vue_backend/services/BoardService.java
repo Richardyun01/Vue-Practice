@@ -1,8 +1,12 @@
 package com.example.vue_backend.services;
 
+import com.example.vue_backend.model.Header;
+import com.example.vue_backend.model.Pagination;
 import com.example.vue_backend.entity.BoardEntity;
 import com.example.vue_backend.entity.BoardRepository;
 import com.example.vue_backend.web.dtos.BoardDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,10 +26,10 @@ public class BoardService {
     /**
      * 게시글 목록 가져오기
      */
-    public List<BoardDto> getBoardList() {
-        List<BoardEntity> boardEntities = boardRepository.findAll();
+    public Header<List<BoardDto>> getBoardList(Pageable pageable) {
         List<BoardDto> dtos = new ArrayList<>();
 
+        Page<BoardEntity> boardEntities = boardRepository.findAllByOrderByIdxDesc(pageable);
         for (BoardEntity entity : boardEntities) {
             BoardDto dto = BoardDto.builder()
                     .idx(entity.getIdx())
@@ -38,7 +42,14 @@ public class BoardService {
             dtos.add(dto);
         }
 
-        return dtos;
+        Pagination pagination = new Pagination(
+                (int) boardEntities.getTotalElements()
+                , pageable.getPageNumber() + 1
+                , pageable.getPageSize()
+                , 10
+        );
+
+        return Header.OK(dtos, pagination);
     }
 
     /**
