@@ -2,8 +2,10 @@ package com.example.vue_backend.services;
 
 import com.example.vue_backend.model.Header;
 import com.example.vue_backend.model.Pagination;
+import com.example.vue_backend.model.SearchCondition;
 import com.example.vue_backend.entity.BoardEntity;
 import com.example.vue_backend.entity.BoardRepository;
+import com.example.vue_backend.entity.BoardRepositoryCustom;
 import com.example.vue_backend.web.dtos.BoardDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,14 +24,15 @@ import java.util.List;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final BoardRepositoryCustom boardRepositoryCustom;
 
     /**
      * 게시글 목록 가져오기
      */
-    public Header<List<BoardDto>> getBoardList(Pageable pageable) {
+    public Header<List<BoardDto>> getBoardList(Pageable pageable, SearchCondition searchCondition) {
         List<BoardDto> dtos = new ArrayList<>();
 
-        Page<BoardEntity> boardEntities = boardRepository.findAllByOrderByIdxDesc(pageable);
+        Page<BoardEntity> boardEntities = boardRepositoryCustom.findAllBySearchCondition(pageable, searchCondition);
         for (BoardEntity entity : boardEntities) {
             BoardDto dto = BoardDto.builder()
                     .idx(entity.getIdx())

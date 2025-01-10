@@ -2,6 +2,7 @@ package com.example.vue_backend.web;
 
 import com.example.vue_backend.entity.BoardEntity;
 import com.example.vue_backend.model.Header;
+import com.example.vue_backend.model.SearchCondition;
 import com.example.vue_backend.services.BoardService;
 import com.example.vue_backend.web.dtos.BoardDto;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +22,10 @@ public class BoardController {
 
     @GetMapping("/board/list")
     public Header<List<BoardDto>> boardList(
-            @PageableDefault(sort = {"idx"}) Pageable pageable
+            @PageableDefault(sort = {"idx"}) Pageable pageable,
+            SearchCondition searchCondition
     ) {
-        return boardService.getBoardList(pageable);
+        return boardService.getBoardList(pageable, searchCondition);
     }
 
     @GetMapping("/board/{id}")
